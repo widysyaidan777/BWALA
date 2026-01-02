@@ -1,24 +1,20 @@
 fetch("wibas_wdh.csv")
-  .then(res => res.text())
-  .then(text => {
-    const rows = text.split("\n").slice(1);
+  .then(response => response.text())
+  .then(csv => {
+    const rows = csv.trim().split("\n");
     const tbody = document.querySelector("#wibasTable tbody");
 
-    rows.forEach((row, i) => {
+    rows.slice(1).forEach(row => {
       const cols = row.split(",");
-      if (cols.length < 8) return;
+      const tr = document.createElement("tr");
 
-      tbody.innerHTML += `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${cols[1]}</td>
-          <td>${cols[2]}</td>
-          <td>${cols[3]}</td>
-          <td>${cols[4]}</td>
-          <td>${cols[5]}</td>
-          <td>${cols[6]}</td>
-          <td>${cols[7]}</td>
-        </tr>
-      `;
+      cols.forEach(col => {
+        const td = document.createElement("td");
+        td.textContent = col;
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
     });
-  });
+  })
+  .catch(err => console.error("CSV load error:", err));
